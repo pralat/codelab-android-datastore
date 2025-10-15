@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-    namespace "com.codelab.android.datastore"
+    namespace = "com.codelab.android.datastore"
     compileSdk 34
 
     defaultConfig {
