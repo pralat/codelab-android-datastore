@@ -19,10 +19,18 @@ package com.codelab.android.datastore.data
 import android.content.Context
 import androidx.core.content.edit
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import kotlinx.coroutines.flow.Flow
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import java.io.IOException
 
 private const val USER_PREFERENCES_NAME = "user_preferences"
 private const val SORT_ORDER_KEY = "sort_order"
@@ -120,6 +128,30 @@ class UserPreferencesRepository(
 //            }
 //        }
 //    }
+
+    private object PreferencesKeys {
+        val SHOW_COMPLETED = booleanPreferencesKey("show_completed")
+    }
+
+    val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
+        .catch { exception ->
+            // dataStore.data throws an IOException when an error is encountered when reading data
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map { preferences ->
+            // Get our show completed value, defaulting to false if not set:
+            val showCompleted = preferences[PreferencesKeys.SHOW_COMPLETED]?: false
+            UserPreferences(showCompleted)
+        }
+
+    suspend fun updateShowCompleted(showCompleted: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_COMPLETED] = showCompleted
+        }
+    }
 
     data class UserPreferences(val showCompleted: Boolean)
 }
