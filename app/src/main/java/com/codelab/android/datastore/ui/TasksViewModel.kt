@@ -23,8 +23,8 @@ import androidx.lifecycle.viewModelScope
 import com.codelab.android.datastore.data.SortOrder
 import com.codelab.android.datastore.data.Task
 import com.codelab.android.datastore.data.TasksRepository
+import com.codelab.android.datastore.data.UserPreferences
 import com.codelab.android.datastore.data.UserPreferencesRepository
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -52,7 +52,7 @@ class TasksViewModel(
     private val tasksUiModelFlow = combine(
         repository.tasks,
         userPreferencesFlow
-    ) { tasks: List<Task>, userPreferences: UserPreferencesRepository.UserPreferences ->
+    ) { tasks: List<Task>, userPreferences: UserPreferences ->
         return@combine TasksUiModel(
             tasks = filterSortTasks(
                 tasks,

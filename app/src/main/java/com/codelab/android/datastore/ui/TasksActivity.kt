@@ -20,9 +20,6 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.SharedPreferencesMigration
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -30,10 +27,6 @@ import com.codelab.android.datastore.data.SortOrder
 import com.codelab.android.datastore.data.TasksRepository
 import com.codelab.android.datastore.data.UserPreferencesRepository
 import com.codelab.android.datastore.databinding.ActivityTasksBinding
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import java.io.IOException
 
 private const val USER_PREFERENCES_NAME = "user_preferences"
 
@@ -45,37 +38,13 @@ private val Context.dataStore by preferencesDataStore(
         listOf(SharedPreferencesMigration(context, USER_PREFERENCES_NAME))
     }
 )
+
 class TasksActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTasksBinding
     private val adapter = TasksAdapter()
 
     private lateinit var viewModel: TasksViewModel
-
-
-
-    private object PreferencesKeys {
-        val SHOW_COMPLETED = booleanPreferencesKey("show_completed")
-        val SORT_ORDER = stringPreferencesKey("sort_order")
-    }
-
-    val userPreferencesFlow: Flow<UserPreferencesRepository.UserPreferences> = dataStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }.map { preferences ->
-            // Get the sort order from preferences and convert it to a [SortOrder] object
-            val sortOrder =
-                SortOrder.valueOf(
-                    preferences[PreferencesKeys.SORT_ORDER] ?: SortOrder.NONE.name)
-
-            // Get our show completed value, defaulting to false if not set:
-            val showCompleted = preferences[PreferencesKeys.SHOW_COMPLETED] ?: false
-            UserPreferencesRepository.UserPreferences(showCompleted, sortOrder)
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
