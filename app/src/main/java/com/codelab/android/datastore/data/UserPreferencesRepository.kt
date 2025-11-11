@@ -39,8 +39,7 @@ private const val SORT_ORDER_KEY = "sort_order"
  * Class that handles saving and retrieving user preferences
  */
 class UserPreferencesRepository (
-    private val userPreferencesStore: DataStore<UserPreferences>,
-    context: Context
+    private val userPreferencesStore: DataStore<UserPreferences>
 ) {
 
     private val TAG: String = "UserPreferencesRepo"

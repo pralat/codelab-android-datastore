@@ -76,7 +76,7 @@ class TasksActivity : AppCompatActivity() {
             this,
             TasksViewModelFactory(
                 TasksRepository,
-                UserPreferencesRepository(userPreferencesStore, this)
+                UserPreferencesRepository(userPreferencesStore)
             )
         ).get(TasksViewModel::class.java)
 
