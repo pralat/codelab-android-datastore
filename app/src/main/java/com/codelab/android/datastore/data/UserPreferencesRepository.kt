@@ -56,23 +56,23 @@ class UserPreferencesRepository (
             }
         }
 
-    private val sharedPreferences =
-        context.applicationContext.getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
+//    private val sharedPreferences =
+//        context.applicationContext.getSharedPreferences(USER_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
     // Keep the sort order as a stream of changes
-    private val _sortOrderFlow = MutableStateFlow(sortOrder)
-    val sortOrderFlow: StateFlow<SortOrder> = _sortOrderFlow
+//    private val _sortOrderFlow = MutableStateFlow(sortOrder)
+//    val sortOrderFlow: StateFlow<SortOrder> = _sortOrderFlow
 
 
 
     /**
      * Get the sort order. By default, sort order is None.
      */
-    private val sortOrder: SortOrder
-        get() {
-            val order = sharedPreferences.getString(SORT_ORDER_KEY, SortOrder.NONE.name)
-            return SortOrder.valueOf(order ?: SortOrder.NONE.name)
-        }
+//    private val sortOrder: SortOrder
+//        get() {
+//            val order = sharedPreferences.getString(SORT_ORDER_KEY, SortOrder.NONE.name)
+//            return SortOrder.valueOf(order ?: SortOrder.NONE.name)
+//        }
 
     suspend fun enableSortByDeadline(enable: Boolean) {
         // updateData handles data transactionally, ensuring that if the sort is updated at the same
@@ -99,7 +99,7 @@ class UserPreferencesRepository (
 
     suspend fun enableSortByPriority(enable: Boolean) {
         userPreferencesStore.updateData { preferences ->
-            val currentOrder = sortOrderFlow.value
+            val currentOrder = preferences.sortOrder
             val newSortOrder =
                 if (enable) {
                     if (currentOrder == SortOrder.BY_DEADLINE) {
@@ -118,11 +118,11 @@ class UserPreferencesRepository (
         }
     }
 
-    private fun updateSortOrder(sortOrder: SortOrder) {
-        sharedPreferences.edit {
-            putString(SORT_ORDER_KEY, sortOrder.name)
-        }
-    }
+//    private fun updateSortOrder(sortOrder: SortOrder) {
+//        sharedPreferences.edit {
+//            putString(SORT_ORDER_KEY, sortOrder.name)
+//        }
+//    }
     suspend fun updateShowCompleted(completed: Boolean) {
         userPreferencesStore.updateData { preferences ->
             preferences.toBuilder().setShowCompleted(completed).build()
